@@ -4,11 +4,11 @@ ABSA template
 <table>
   <tr>
     <td rowspan="2">Model</td>
-    <td colspan="2" style="text-align:center">Twitter</td style="text-align:center">
-    <td colspan="2" style="text-align:center">Lap14</td style="text-align:center">
-    <td colspan="2" style="text-align:center">Rest14</td style="text-align:center">
-    <td colspan="2" style="text-align:center">Rest15</td style="text-align:center">
-    <td colspan="2" style="text-align:center">Rest16</td style="text-align:center">
+    <td colspan="2"><center>Twitter</center></td>
+    <td colspan="2"><center>Lap14</center></td>
+    <td colspan="2"><center>Rest14</center></td>
+    <td colspan="2"><center>Rest15</center></td>
+    <td colspan="2"><center>Rest16</center></td>
   </tr>
   <tr>
     <td>Acc</td>
