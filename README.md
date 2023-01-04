@@ -12,15 +12,15 @@ ABSA template
   </tr>
   <tr>
     <td>Acc</td>
-    <td>Macro-F1</td>
+    <td>F1</td>
     <td>Acc</td>
-    <td>Macro-F1</td>
+    <td>F1</td>
     <td>Acc</td>
-    <td>Macro-F1</td>
+    <td>F1</td>
     <td>Acc</td>
-    <td>Macro-F1</td>
+    <td>F1</td>
     <td>Acc</td>
-    <td>Macro-F1</td>
+    <td>F1</td>
   </tr>
   <tr>
     <td>LSTM</td>
