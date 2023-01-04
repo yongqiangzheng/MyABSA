@@ -8,28 +8,31 @@ ABSA template
     <td colspan="2">Lap14</td>
     <td colspan="2">Rest14</td>
     <td colspan="2">Rest15</td>
+    <td colspan="2">Rest16</td>
   </tr>
   <tr>
     <td>Acc</td>
     <td>Macro-F1</td>
-    
     <td>Acc</td>
     <td>Macro-F1</td>
-    
     <td>Acc</td>
     <td>Macro-F1</td>
-    
     <td>Acc</td>
     <td>Macro-F1</td>
-    
     <td>Acc</td>
     <td>Macro-F1</td>
-  </tr> 
-
+  </tr>
+  <tr>
+    <td>LSTM</td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+ 
 </table>
-
-
-| Model | Twitter | Twitter | Lap14 | Lap14 | Rest14 | Rest14 | Rest15 | Rest15 | Rest16 | Rest16 |
-| - | - | - | - | - | - | - | - | - | - | - |
-|       | Acc | F1 | Acc | F1 | Acc | F1 | Acc | F1 | Acc | F1 |
-| LSTM  |
