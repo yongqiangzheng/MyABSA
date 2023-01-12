@@ -125,9 +125,9 @@ class Instructor:
             if val_acc > max_val_acc:
                 max_val_acc = val_acc
                 max_val_epoch = i_epoch
-                if not os.path.exists('state_dict'):
-                    os.mkdir('state_dict')
-                path = 'state_dict/{0}_{1}_val_acc_{2}'.format(self.opt.model_name, self.opt.dataset, round(val_acc, 4))
+                if not os.path.exists('state_dict/{}/{}'.format(self.opt.model_name, self.opt.dataset)):
+                    os.makedirs('state_dict/{}/{}'.format(self.opt.model_name, self.opt.dataset))
+                path = 'state_dict/{0}/{1}/{0}_{1}_val_acc_{2}_f1_{3}'.format(self.opt.model_name, self.opt.dataset, round(val_acc, 4), round(val_f1, 4))
                 torch.save(self.model.state_dict(), path)
                 logger.info('>> saved: {}'.format(path))
             if val_f1 > max_val_f1:
@@ -164,7 +164,7 @@ class Instructor:
                               average='macro')
         return acc, f1
 
-    def run(self):
+    def run(self, repeats=3):
         # Loss and Optimizer
         criterion = nn.CrossEntropyLoss()
         _params = filter(lambda p: p.requires_grad, self.model.parameters())
@@ -180,17 +180,34 @@ class Instructor:
         test_acc, test_f1 = self._evaluate_acc_f1(test_data_loader)
         logger.info('>> test_acc: {:.4f}, test_f1: {:.4f}'.format(test_acc, test_f1))
 
+        all_test_acc, all_test_f1 = [], []
+        for i in range(repeats):
+            logger.info('Times : {}'.format(i + 1))
+            logger.info('>' * 100)
+            self._reset_params()
+            best_model_path = self._train(criterion, optimizer, train_data_loader, val_data_loader)
+            self.model.load_state_dict(torch.load(best_model_path))
+            test_acc, test_f1 = self._evaluate_acc_f1(test_data_loader)
+            all_test_acc.append(test_acc)
+            all_test_f1.append(test_f1)
+            logger.info('>> test_acc: {:.4f}, test_f1: {:.4f}'.format(test_acc, test_f1))
+        mean_test_acc, mean_test_f1 = numpy.mean(all_test_acc), numpy.mean(all_test_f1)
+        logger.info('>' * 100)
+        for acc, f1 in zip(all_test_acc, all_test_f1):
+            logger.info('>>> Acc. {} F1 {}'.format(round(acc, 4), round(f1, 4)))
+        logger.info('>>> mean_test_acc: {:.4f}, mean_test_f1: {:.4f}'.format(mean_test_acc, mean_test_f1))
+
 
 def main():
     # Hyper Parameters
     parser = argparse.ArgumentParser()
     parser.add_argument('--model_name', default='lstm', type=str)
-    parser.add_argument('--dataset', default='twitter', type=str, help='twitter, restaurant, laptop')
+    parser.add_argument('--dataset', default='lap14', type=str, help='twitter, restaurant, laptop')
     parser.add_argument('--optimizer', default='adam', type=str)
     parser.add_argument('--initializer', default='xavier_uniform_', type=str)
-    parser.add_argument('--lr', default=2e-5, type=float, help='try 5e-5, 2e-5 for BERT, 1e-3 for others')
-    parser.add_argument('--dropout', default=0.1, type=float)
-    parser.add_argument('--l2reg', default=0.01, type=float)
+    parser.add_argument('--lr', default=1e-3, type=float, help='try 5e-5, 2e-5 for BERT, 1e-3 for others')
+    parser.add_argument('--dropout', default=0.3, type=float)
+    parser.add_argument('--l2reg', default=1e-5, type=float)
     parser.add_argument('--num_epoch', default=20, type=int, help='try larger number for non-BERT models')
     parser.add_argument('--batch_size', default=16, type=int, help='try 16, 32, 64 for BERT models')
     parser.add_argument('--log_step', default=10, type=int)
@@ -203,7 +220,7 @@ def main():
     parser.add_argument('--hops', default=3, type=int)
     parser.add_argument('--patience', default=5, type=int)
     parser.add_argument('--device', default=None, type=str, help='e.g. cuda:0')
-    parser.add_argument('--seed', default=1234, type=int, help='set seed for reproducibility')
+    parser.add_argument('--seed', default=42, type=int, help='set seed for reproducibility')
     parser.add_argument('--valset_ratio', default=0, type=float,
                         help='set ratio between 0 and 1 for validation support')
     # The following parameters are only valid for the lcf-bert model
