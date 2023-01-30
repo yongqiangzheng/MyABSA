@@ -201,11 +201,11 @@ class Instructor:
 def main():
     # Hyper Parameters
     parser = argparse.ArgumentParser()
-    parser.add_argument('--model_name', default='lstm', type=str)
-    parser.add_argument('--dataset', default='lap14', type=str, help='twitter, restaurant, laptop')
+    parser.add_argument('--model_name', default='bert_spc', type=str)
+    parser.add_argument('--dataset', default='twitter', type=str, help='twitter, restaurant, laptop')
     parser.add_argument('--optimizer', default='adam', type=str)
     parser.add_argument('--initializer', default='xavier_uniform_', type=str)
-    parser.add_argument('--lr', default=1e-3, type=float, help='try 5e-5, 2e-5 for BERT, 1e-3 for others')
+    parser.add_argument('--lr', default=2e-5, type=float, help='try 5e-5, 2e-5 for BERT, 1e-3 for others')
     parser.add_argument('--dropout', default=0.3, type=float)
     parser.add_argument('--l2reg', default=1e-5, type=float)
     parser.add_argument('--num_epoch', default=20, type=int, help='try larger number for non-BERT models')
@@ -276,6 +276,7 @@ def main():
         'rest15': {
             'train': '../datasets/semeval15/rest15_train',
             'test': '../datasets/semeval15/rest15_test'
+
         },
         'rest16': {
             'train': '../datasets/semeval16/rest16_train',

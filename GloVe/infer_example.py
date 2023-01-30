@@ -12,7 +12,7 @@ from GloVe.data_utils import build_tokenizer, build_embedding_matrix, Tokenizer4
 from models import LSTM, IAN, MemNet, RAM, TD_LSTM, TC_LSTM, Cabasc, ATAE_LSTM, TNet_LF, AOA, MGAN, ASGCN, LCF_BERT
 from models.aen import AEN_BERT
 from models.bert_spc import BERT_SPC
-from GloVe.dependency_graph import dependency_adj_matrix
+from dependency_graph import dependency_adj_matrix
 
 from transformers import BertModel
 

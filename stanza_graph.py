@@ -6,7 +6,7 @@ import pickle
 
 from tqdm import tqdm
 
-nlp = stanza.Pipeline('en', tokenize_pretokenized=True, download_method=False)
+nlp = stanza.Pipeline('en', use_gpu=True, tokenize_pretokenized=True, download_method=False)
 
 
 def dependency_adj_matrix(text):
@@ -42,13 +42,13 @@ def process(filename):
 
 
 if __name__ == '__main__':
-    process('../datasets/acl-14-short-data/train')
-    process('../datasets/acl-14-short-data/test')
-    process('../datasets/semeval14/lap14_train')
-    process('../datasets/semeval14/lap14_test')
-    process('../datasets/semeval14/rest14_train')
-    process('../datasets/semeval14/rest14_test')
-    process('../datasets/semeval15/rest15_train')
-    process('../datasets/semeval15/rest15_test')
-    process('../datasets/semeval16/rest16_train')
-    process('../datasets/semeval16/rest16_test')
+    process('datasets/acl-14-short-data/train')
+    process('datasets/acl-14-short-data/test')
+    process('datasets/semeval14/lap14_train')
+    process('datasets/semeval14/lap14_test')
+    process('datasets/semeval14/rest14_train')
+    process('datasets/semeval14/rest14_test')
+    process('datasets/semeval15/rest15_train')
+    process('datasets/semeval15/rest15_test')
+    process('datasets/semeval16/rest16_train')
+    process('datasets/semeval16/rest16_test')
