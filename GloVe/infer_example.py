@@ -12,7 +12,7 @@ from GloVe.data_utils import build_tokenizer, build_embedding_matrix, Tokenizer4
 from models import LSTM, IAN, MemNet, RAM, TD_LSTM, TC_LSTM, Cabasc, ATAE_LSTM, TNet_LF, AOA, MGAN, ASGCN, LCF_BERT
 from models.aen import AEN_BERT
 from models.bert_spc import BERT_SPC
-from dependency_graph import dependency_adj_matrix
+from dep_graph import spacy_dep_adj
 
 from transformers import BertModel
 
@@ -64,7 +64,7 @@ class Inferer:
         text_bert_indices = self.tokenizer.text_to_sequence("[CLS] " + text_left + " " + aspect + " " + text_right + " [SEP]")
         aspect_bert_indices = self.tokenizer.text_to_sequence("[CLS] " + aspect + " [SEP]")
 
-        dependency_graph = dependency_adj_matrix(text)
+        dependency_graph = spacy_dep_adj(text)
 
         data = {
             'concat_bert_indices': concat_bert_indices,

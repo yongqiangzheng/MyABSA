@@ -125,13 +125,18 @@ class Tokenizer4Bert:
 
 
 class ABSADataset(Dataset):
-    def __init__(self, fname, tokenizer):
+    def __init__(self, fname, model, tokenizer):
+        print("reading dataset path: {}".format(fname))
         fin = open(fname, 'r', encoding='utf-8', newline='\n', errors='ignore')
         lines = fin.readlines()
         fin.close()
-        # fin = open(fname + '.spacy.graph', 'rb')
-        # idx2graph = pickle.load(fin)
-        # fin.close()
+        if 'gcn' in model:
+            print("reading graph path: {}".format(fname + '.spacy.graph'))
+            fin = open(fname + '.spacy.graph', 'rb')
+            idx2graph = pickle.load(fin)
+            fin.close()
+        else:
+            print("reading graph path: this model do not need graph!")
 
         all_data = []
         for i in range(0, len(lines), 3):
@@ -151,25 +156,12 @@ class ABSADataset(Dataset):
             aspect_boundary = np.asarray([left_len, left_len + aspect_len - 1], dtype=np.int64)
             polarity = int(polarity) + 1
 
-            text_len = np.sum(text_indices != 0)
-            concat_bert_indices = tokenizer.text_to_sequence(
-                '[CLS] ' + text_left + " " + aspect + " " + text_right + ' [SEP] ' + aspect + " [SEP]")
-            concat_segments_indices = [0] * (text_len + 2) + [1] * (aspect_len + 1)
-            concat_segments_indices = pad_and_truncate(concat_segments_indices, tokenizer.max_seq_len)
 
-            text_bert_indices = tokenizer.text_to_sequence(
-                "[CLS] " + text_left + " " + aspect + " " + text_right + " [SEP]")
-            aspect_bert_indices = tokenizer.text_to_sequence("[CLS] " + aspect + " [SEP]")
-
-            # dependency_graph = np.pad(idx2graph[i], \
-            #                           ((0, tokenizer.max_seq_len - idx2graph[i].shape[0]),
-            #                            (0, tokenizer.max_seq_len - idx2graph[i].shape[0])), 'constant')
-
+            if 'gcn' in model:
+                dependency_graph = np.pad(idx2graph[i], ((0, tokenizer.max_seq_len - idx2graph[i].shape[0]), (0, tokenizer.max_seq_len - idx2graph[i].shape[0])), 'constant')
+            else:
+                dependency_graph = []
             data = {
-                'concat_bert_indices': concat_bert_indices,
-                'concat_segments_indices': concat_segments_indices,
-                'text_bert_indices': text_bert_indices,
-                'aspect_bert_indices': aspect_bert_indices,
                 'text_indices': text_indices,
                 'context_indices': context_indices,
                 'left_indices': left_indices,
@@ -178,7 +170,7 @@ class ABSADataset(Dataset):
                 'right_with_aspect_indices': right_with_aspect_indices,
                 'aspect_indices': aspect_indices,
                 'aspect_boundary': aspect_boundary,
-                # 'dependency_graph': dependency_graph,
+                'dependency_graph': dependency_graph,
                 'polarity': polarity,
             }
 
