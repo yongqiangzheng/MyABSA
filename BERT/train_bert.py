@@ -192,7 +192,7 @@ def main():
     # Hyper Parameters
     parser = argparse.ArgumentParser()
     parser.add_argument('--model_name', default='bert_spc', type=str)
-    parser.add_argument('--dataset', default='twitter', type=str, help='twitter, restaurant, laptop')
+    parser.add_argument('--dataset', default='twitter', type=str, help='twitter, lap14, rest14, rest15, rest16')
     parser.add_argument('--optimizer', default='adam', type=str)
     parser.add_argument('--initializer', default='xavier_uniform_', type=str)
     parser.add_argument('--lr', default=2e-5, type=float, help='try 5e-5, 2e-5 for BERT, 1e-3 for others')
@@ -211,12 +211,7 @@ def main():
     parser.add_argument('--patience', default=5, type=int)
     parser.add_argument('--device', default=None, type=str, help='e.g. cuda:0')
     parser.add_argument('--seed', default=42, type=int, help='set seed for reproducibility')
-    parser.add_argument('--valset_ratio', default=0, type=float,
-                        help='set ratio between 0 and 1 for validation support')
-    # The following parameters are only valid for the lcf-bert model
-    parser.add_argument('--local_context_focus', default='cdm', type=str, help='local context focus mode, cdw or cdm')
-    parser.add_argument('--SRD', default=3, type=int,
-                        help='semantic-relative-distance, see the paper of LCF-BERT model')
+    parser.add_argument('--valset_ratio', default=0, type=float, help='set ratio between 0 and 1 for validation support')
     opt = parser.parse_args()
 
     if opt.seed is not None:
@@ -229,26 +224,7 @@ def main():
         os.environ['PYTHONHASHSEED'] = str(opt.seed)
 
     model_classes = {
-        'lstm': LSTM,
-        'td_lstm': TD_LSTM,
-        'tc_lstm': TC_LSTM,
-        'atae_lstm': ATAE_LSTM,
-        'ian': IAN,
-        'memnet': MemNet,
-        'ram': RAM,
-        'cabasc': Cabasc,
-        'tnet_lf': TNet_LF,
-        'aoa': AOA,
-        'mgan': MGAN,
-        'asgcn': ASGCN,
         'bert_spc': BERT_SPC,
-        'aen_bert': AEN_BERT,
-        'lcf_bert': LCF_BERT,
-        # default hyper-parameters for LCF-BERT model is as follws:
-        # lr: 2e-5
-        # l2: 1e-5
-        # batch size: 16
-        # num epochs: 5
     }
     dataset_files = {
         'twitter': {

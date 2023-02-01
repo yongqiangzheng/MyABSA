@@ -205,7 +205,7 @@ def main():
     # Hyper Parameters
     parser = argparse.ArgumentParser()
     parser.add_argument('--model_name', default='lstm', type=str)
-    parser.add_argument('--dataset', default='twitter', type=str, help='twitter, restaurant, laptop')
+    parser.add_argument('--dataset', default='twitter', type=str, help='twitter, lap14, rest14, rest15, rest16')
     parser.add_argument('--optimizer', default='adam', type=str)
     parser.add_argument('--initializer', default='xavier_uniform_', type=str)
     parser.add_argument('--lr', default=1e-3, type=float, help='try 5e-5, 2e-5 for BERT, 1e-3 for others')
