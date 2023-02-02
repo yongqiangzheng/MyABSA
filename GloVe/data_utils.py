@@ -8,7 +8,6 @@ import pickle
 import numpy as np
 import torch
 from torch.utils.data import Dataset
-from transformers import BertTokenizer
 
 
 def build_tokenizer(fnames, max_seq_len, dat_fname):
@@ -103,20 +102,6 @@ class Tokenizer(object):
         words = text.split()
         unknownidx = len(self.word2idx) + 1
         sequence = [self.word2idx[w] if w in self.word2idx else unknownidx for w in words]
-        if len(sequence) == 0:
-            sequence = [0]
-        if reverse:
-            sequence = sequence[::-1]
-        return pad_and_truncate(sequence, self.max_seq_len, padding=padding, truncating=truncating)
-
-
-class Tokenizer4Bert:
-    def __init__(self, max_seq_len, pretrained_bert_name):
-        self.tokenizer = BertTokenizer.from_pretrained(pretrained_bert_name)
-        self.max_seq_len = max_seq_len
-
-    def text_to_sequence(self, text, reverse=False, padding='post', truncating='post'):
-        sequence = self.tokenizer.convert_tokens_to_ids(self.tokenizer.tokenize(text))
         if len(sequence) == 0:
             sequence = [0]
         if reverse:

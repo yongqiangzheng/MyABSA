@@ -8,6 +8,7 @@ import argparse
 
 from spacy.tokens import Doc
 from tqdm import tqdm
+from transformers import BertTokenizer
 
 
 class WhitespaceTokenizer(object):
@@ -25,7 +26,9 @@ spacy.prefer_gpu()
 spacy_nlp = spacy.load('en_core_web_trf')
 spacy_nlp.tokenizer = WhitespaceTokenizer(spacy_nlp.vocab)
 
-stanza_nlp = stanza.Pipeline('en', use_gpu=True, tokenize_pretokenized=True, download_method=False)
+# stanza_nlp = stanza.Pipeline('en', use_gpu=True, tokenize_pretokenized=True, download_method=False)
+
+tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
 
 
 def spacy_dep_adj(text):
@@ -61,12 +64,15 @@ def stanza_dep_adj(text):
     return matrix
 
 
-def bert_dep_adj(ori_adj, tokenizer, text_left, aspect, text_right, heter=False):
+def bert_dep_adj(ori_adj, text_left, aspect, text_right, heter=False):
+    text_left = text_left.split()
+    aspect = aspect.split()
+    text_right = text_right.split()
     left_tokens, term_tokens, right_tokens = [], [], []
     left_tok2ori_map, term_tok2ori_map, right_tok2ori_map = [], [], []
     if heter:
-        heter_tokens = ['POS', 'NEG'] # add your nodes
-        heter_tok2ori_map = list(range(0,len(heter_tokens)))
+        heter_tokens = ['POS', 'NEG']  # add your nodes
+        heter_tok2ori_map = list(range(0, len(heter_tokens)))
         offset = len(heter_tokens)
     else:
         heter_tokens = []
@@ -87,12 +93,10 @@ def bert_dep_adj(ori_adj, tokenizer, text_left, aspect, text_right, heter=False)
         for t in tokenizer.tokenize(w):
             right_tokens.append(t)
             right_tok2ori_map.append(ori_i + offset)
-
     bert_tokens = heter_tokens + left_tokens + term_tokens + right_tokens
     tok2ori_map = heter_tok2ori_map + left_tok2ori_map + term_tok2ori_map + right_tok2ori_map
     truncate_tok_len = len(bert_tokens)
-    tok_adj = np.zeros(
-        (truncate_tok_len, truncate_tok_len), dtype='float32')
+    tok_adj = np.zeros((truncate_tok_len, truncate_tok_len), dtype='float32')
     for i in range(truncate_tok_len):
         for j in range(truncate_tok_len):
             tok_adj[i][j] = ori_adj[tok2ori_map[i]][tok2ori_map[j]]
@@ -103,20 +107,25 @@ def process(filename):
     fin = open(filename, 'r', encoding='utf-8', newline='\n', errors='ignore')
     lines = fin.readlines()
     fin.close()
-    idx2graph_spacy, idx2graph_stanza = {}, {}
-    fout_spacy = open(filename + '.spacy.graph', 'wb')
-    fout_stanza = open(filename + '.stanza.graph', 'wb')
+    idx2graph_spacy, idx2graph_spacy_bert, idx2graph_stanza = {}, {}, {}
+    # fout_spacy = open(filename + '.spacy.graph', 'wb')
+    fout_spacy_bert = open(filename + '.spacy_bert.graph', 'wb')
+    # fout_stanza = open(filename + '.stanza.graph', 'wb')
+
     for i in tqdm(range(0, len(lines), 3)):
         text_left, _, text_right = [s.strip() for s in lines[i].partition("$T$")]
         aspect = lines[i + 1].strip()
         spacy_adj = spacy_dep_adj(text_left + ' ' + aspect + ' ' + text_right)
-        stanza_adj = stanza_dep_adj(text_left + ' ' + aspect + ' ' + text_right)
+        # stanza_adj = stanza_dep_adj(text_left + ' ' + aspect + ' ' + text_right)
         idx2graph_spacy[i] = spacy_adj
-        idx2graph_stanza[i] = stanza_adj
-    pickle.dump(idx2graph_spacy, fout_spacy)
-    pickle.dump(idx2graph_stanza, fout_stanza)
-    fout_spacy.close()
-    fout_stanza.close()
+        idx2graph_spacy_bert[i] = bert_dep_adj(spacy_adj, text_left, aspect, text_right)
+        # idx2graph_stanza[i] = stanza_adj
+    # pickle.dump(idx2graph_spacy, fout_spacy)
+    # pickle.dump(idx2graph_stanza, fout_stanza)
+    pickle.dump(idx2graph_spacy_bert, fout_spacy_bert)
+    # fout_spacy.close()
+    # fout_stanza.close()
+    fout_spacy_bert.close()
 
 
 if __name__ == '__main__':

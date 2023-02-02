@@ -52,11 +52,12 @@ class ABSADataset_BERT(Dataset):
         lines = fin.readlines()
         fin.close()
         if 'gcn' in model:
-            fin = open(fname + '.spacy.graph', 'rb')
+            print("reading graph path: {}".format(fname + '.spacy_bert.graph'))
+            fin = open(fname + '.spacy_bert.graph', 'rb')
             idx2graph = pickle.load(fin)
             fin.close()
         else:
-            print("this model do not need graph!")
+            print("reading graph path: this model do not need graph!")
 
         all_data = []
         for i in range(0, len(lines), 3):

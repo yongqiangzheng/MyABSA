@@ -3,6 +3,7 @@
 # author: songyouwei <youwei0314@gmail.com>
 # Copyright (C) 2018. All Rights Reserved.
 
+from models.bert_gcn import BERT_GCN
 from models.lstm import LSTM
 from models.ian import IAN
 from models.memnet import MemNet

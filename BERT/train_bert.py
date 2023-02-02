@@ -24,9 +24,8 @@ import torch.nn as nn
 from torch.utils.data import DataLoader, random_split
 
 from data_utils_bert import Tokenizer4Bert, ABSADataset_BERT
-from models import LSTM, IAN, MemNet, RAM, TD_LSTM, TC_LSTM, Cabasc, ATAE_LSTM, TNet_LF, AOA, MGAN, ASGCN, LCF_BERT
-from models.aen import CrossEntropyLoss_LSR, AEN_BERT
 from models.bert_spc import BERT_SPC
+from models import BERT_GCN
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -191,8 +190,8 @@ class Instructor:
 def main():
     # Hyper Parameters
     parser = argparse.ArgumentParser()
-    parser.add_argument('--model_name', default='bert_spc', type=str)
-    parser.add_argument('--dataset', default='twitter', type=str, help='twitter, lap14, rest14, rest15, rest16')
+    parser.add_argument('--model_name', default='bert_gcn', type=str)
+    parser.add_argument('--dataset', default='rest16', type=str, help='twitter, lap14, rest14, rest15, rest16')
     parser.add_argument('--optimizer', default='adam', type=str)
     parser.add_argument('--initializer', default='xavier_uniform_', type=str)
     parser.add_argument('--lr', default=2e-5, type=float, help='try 5e-5, 2e-5 for BERT, 1e-3 for others')
@@ -205,7 +204,7 @@ def main():
     parser.add_argument('--hidden_dim', default=300, type=int)
     parser.add_argument('--bert_dim', default=768, type=int)
     parser.add_argument('--pretrained_bert_name', default='bert-base-uncased', type=str)
-    parser.add_argument('--max_seq_len', default=85, type=int)
+    parser.add_argument('--max_seq_len', default=100, type=int)
     parser.add_argument('--polarities_dim', default=3, type=int)
     parser.add_argument('--hops', default=3, type=int)
     parser.add_argument('--patience', default=5, type=int)
@@ -225,6 +224,7 @@ def main():
 
     model_classes = {
         'bert_spc': BERT_SPC,
+        'bert_gcn': BERT_GCN,
     }
     dataset_files = {
         'twitter': {
@@ -251,6 +251,7 @@ def main():
 
     }
     input_colses = {
+        'bert_gcn': ['concat_bert_indices', 'concat_segments_indices', 'dependency_graph'],
         'lstm': ['text_indices'],
         'td_lstm': ['left_with_aspect_indices', 'right_with_aspect_indices'],
         'tc_lstm': ['left_with_aspect_indices', 'right_with_aspect_indices', 'aspect_indices'],

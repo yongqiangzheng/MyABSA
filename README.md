@@ -50,6 +50,19 @@ ABSA template
         <td>77.50</td>
     </tr>
     <tr>
+        <td>BERT+GCN</td>
+        <td>74.04</td>
+        <td>72.78</td>
+        <td>77.95</td>
+        <td>73.70</td>
+        <td>84.02</td>
+        <td>76.47</td>
+        <td>84.93</td>
+        <td>73.15</td>
+        <td>91.61</td>
+        <td>78.00</td>
+    </tr>
+    <tr>
         <td></td>
         <td></td>
         <td></td>
